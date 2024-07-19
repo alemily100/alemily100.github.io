@@ -26,7 +26,7 @@ author:
   pronouns         : # example: "she/her"  
   bio              : "PhD Biostatistics student "
   location         : "London"
-  employer         : " The Institute of Cancer Research"
+  employer         : "Institute of Cancer Research"
   uri              : # URL
   email            : "emily.alger@icr.ac.uk" 
 
@@ -57,7 +57,7 @@ author:
   keybase          : # Username
   instagram        : # Username
   lastfm           : # Username
-  linkedin         : Emily Alger
+  linkedin         : # Username
   mastodon         : # URL
   medium           : # URL
   pinterest        : # Username
