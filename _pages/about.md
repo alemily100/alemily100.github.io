@@ -1,11 +1,12 @@
 ---
 permalink: /
-title: "Welcome to my website"
+title: "Welcome!"
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
 ---
+
 
 My name is Emily, I am a Biostatistics PhD student at the Institute of Cancer Research, supervised by Professor Christina Yap. My research interests lie in adaptive early phase trials, and I am currently developing novel bayesian adaptive dose-finding trial designs which incorporate a Patient-Reported Outcome endpoint. More broadly speaking, I love to read about and implement novel bayesian methods. My aim is to continue introducing novel statitsical methodology within the realm adaptive trials.   
 
