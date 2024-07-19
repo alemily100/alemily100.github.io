@@ -4,7 +4,7 @@ main:
     url: /files/resume.pdf
 
   - title: "Publications"
-    url: /publications/
+    url: https://scholar.google.co.uk/citations?user=gDes_VgAAAAJ&hl=en&oi=sra
 
   - title: "Talks"
     url: /talks/    
