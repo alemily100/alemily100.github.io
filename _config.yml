@@ -24,9 +24,9 @@ author:
   avatar           : "Emily, Alger.jpg"
   name             : "Emily Alger"
   pronouns         : # example: "she/her"  
-  bio              : "PhD Biostatistics student "
-  location         : "London"
-  employer         : "ICR"
+  bio              : "Biostatistics Postdoctoral researcher"
+  location         : #
+  employer         : "University of Oxford"
   uri              : # URL
   email            : # URL
 
