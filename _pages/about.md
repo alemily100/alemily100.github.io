@@ -16,4 +16,4 @@ I previously completed a PhD at the Institute of Cancer Research integrating Pat
 
 Until July 2024, I was an Enrichment Student at the [Alan Turing Institute](https://www.turing.ac.uk/people/former-enrichment-students/emily-alger). I was awarded an integrated masters in Mathematics and Statistics from the University of Warwick and have previously worked as a research assistant at the MRC Biostatistics Unit at the University of Cambridge.   
 
-Please feel free to contact me via [email](mailto:emily.alger@icr.ac.uk).
+Please feel free to contact me via [email](mailto:emily.alger@ndm.ox.ac.uk).
