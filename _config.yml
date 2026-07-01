@@ -12,7 +12,7 @@ title                    : "Emily Alger"
 title_separator          : "-"
 name                     : &name "Emily Alger"
 description              : &description "personal description"
-url                      : https://algerithm.com/ # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+url                      : https://alger_ithm.com/ # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "alemily100/alemily100.github.io"
 
