@@ -49,11 +49,11 @@ Whilst neural Networks have always struck me as mystical black box, broadly spea
 
 Like any statsitical model, with a neural network you have a number of inputs which you wish to use to predict some output. Similarly to a linear regression, a neural network takes these inputs and finds a relationship to map these inputs to an output. The exact relationship between inputs and outputs is formed in hidden layers of the neural network. 
 
-Consider a simple neural network with $L$ layers which looks something like,
+Consider a simple neural network with $$L$$ layers which looks something like,
 
 IMAGE 
 
-We start with our raw inputs $x$. These raw inputs are linearly transformed given a weight $$w^{(1)}$$ and bias $$b^{(1)}$$ such that $$z^{(1)} = w^{(1)}x + b^{(1)}$$. $$z^{(1)}$$ is then transformed using non-linear transformation $$\sigma^{(1)}$$ such that $$a^{(1)} = \sigma^{(1)}(z^{(1)})$$. Exemplar functions $$\sigma^{(1)}$$ can include sigmoid() or tanh() functions. 
+We start with our raw inputs $$x$$. These raw inputs are linearly transformed given a weight $$w^{(1)}$$ and bias $$b^{(1)}$$ such that $$z^{(1)} = w^{(1)}x + b^{(1)}$$. $$z^{(1)}$$ is then transformed using non-linear transformation $$\sigma^{(1)}$$ such that $$a^{(1)} = \sigma^{(1)}(z^{(1)})$$. Exemplar functions $$\sigma^{(1)}$$ can include sigmoid() or tanh() functions. 
 
 Now at the second layer, the activation function consists of a non-linear transformation of a linear transformation of the proceeding activation function. For example, $$a^{(2)} = \sigma^{(2)}(w^{(2)}a^{(1)} + b^{(2)}) = \sigma^{(2)}(w^{(2)}\sigma^{(1)}(w^{(1)}x + b^{(1)}) + b^{(2)})$$. 
 A third layer has an activation function which is function of the proceeding activation function from the second layer and so on. By adding more layers to the neural network, we increase its *width*. Once we have computed the activation function for the final layer $L$, there are by now many parameters (weights and biases) associated with the predictive task. 
