@@ -6,6 +6,7 @@ tags:
   - BED
   - ML
 author_profile: false
+classes: wide
 ---
 
 In the blog post, I introduce [Deep Adaptive Desing (DAD)](https://arxiv.org/pdf/2103.02438), an increasingly common computational appraoch to implement Bayesian Experimental Design. The post includes a whistle stop tour of the core concepts of BED, Neural Networks and Embeddings, written with statisticians in mind who are new to the world of Machine Learning (like me)!
