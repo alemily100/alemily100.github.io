@@ -89,9 +89,6 @@ class encoder(nn.Module):
         x=self.linear1(x)
         x=self.act_fn(x)
         x=self.linear2(x)
-        
-        #standardise this x 
-        
         return x
 ```
 
@@ -211,7 +208,6 @@ optimiser=torch.optim.Adam(policy.parameters(), lr=0.0001, betas=betas)
 
 
 scheduler = torch.optim.lr_scheduler.StepLR(optimiser,step_size=annealing_frequency,gamma=gamma,)
-#save_dir = "/well/cebam/users/wuy614/practice_dad"
 save_dir = "results"
 loss_history = []
 
