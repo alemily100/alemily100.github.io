@@ -70,3 +70,175 @@ import torch
 import torch.nn as nn
 import os
 ```
+
+## Embeddings
+In a neural network, you may not wish to input raw data but rather a *representation* of the data using an *embedding*. Embeddings can be used to transform complex data (such as audio or image data) into lower-dimensional objects for use in a Machine Learning model. In this way, embeddings can learn the important relationships of the higher dimensional space whilst its lower dimensional representation is easier to work with and more computationally efficient. Alternatively, as per the code below, embeddings can also be used to map lower-dimensional raw data into a higher-dimensional representation. This may help models recognise more granular nuances in the data. 
+
+These embeddings can be learnt using Neural networks. For example, in the code below for a neural network called `encoder`,  we take some raw data of dimension 2, have a single hidden layer of 128 nodes and output a new representation of the raw data with dimension 8. This eight-dimensional representation is used as the input to some model with a specific prediction task encoded into its loss. As such, when the neural backpropagates using this loss, the weights and biases associated with this embedding are tuned to ensure a more effective embedding can be utilised.
+
+```python 
+class encoder(nn.Module):
+    def __init__(self, num_inputs = 2, num_hidden=128, num_outputs=8):
+        super().__init__()
+        self.linear1=nn.Linear(num_inputs, num_hidden)
+        self.act_fn=nn.ReLU()
+        self.linear2=nn.Linear(num_hidden, num_outputs)
+
+    def forward(self, x):
+        x=self.linear1(x)
+        x=self.act_fn(x)
+        x=self.linear2(x)
+        
+        #standardise this x 
+        
+        return x
+```
+
+## Exemplar problem 
+Consider a scenario where we wish to identify the location of a signal source somewhere in one-dimensional space. In this example, we can choose points in space and estimate the signal intensity at each one. Suppose we can complete $T$ experiments and by the end of the 15th experiment, we want to have identified the location of the source $\theta$ as precisely as possible. 
+
+To use DAD in this scenario we need a model for the signal strength. At location $$\xi$$, if the source of the signal is $$\theta$$ the signal strength is known to be, 
+$$ \mu(\theta, \xi) = 10^{-1} + \frac{1}{10^{-4} + || \theta - \xi||^2}.$$
+
+```python 
+def signal(theta_0, xi, alpha = torch.tensor([1]), b = torch.tensor([10**-1]), m = torch.tensor([10**-4])):
+    return b + (alpha)/(m + (theta_0-xi)**2)
+```
+
+Our observations are subject to some noise and as such the likelihood of observing signal strength $y$ conditional on the location of experiment $$\xi$$ and true source location $\theta$ can be written as,
+$$
+\log( y \mid \theta, \xi) \sim N(\log(\mu(\theta, \xi), 0.5)).
+$$
+We consider the following prior on the source location, $$\theta \sim N(0,1)$$.
+
+## Implementation
+DAD is trained before data is even seen using synthetic data coming from the prior. In this way, the neural network can be trained to select new data points using previous history before the experiment even commences. Then at deployment, decision-making on which experiment to conduct next is made by the trained neural network almost instantaneously by doing on forward pass of the model, rather than by completing a computationally burdensome Monte Carlo estimate for the doubly intractable integral. 
+
+The trained neural network $\pi$ called the *design policy*. Whilst the policy could be trained to take in all the history of experiments so far $$h_t = \{(\xi_1, y_1), (\xi_t, y_t)\}$$, instead in this example it takes in a representation of this experiment and outputs the next recommended experiment $\xi_{t+1}$. This is done using the `encoder` code we presented in the section on embeddings. 
+
+Our encoder starts with two dimensions for $$(\xi_t, y_t)$$ at fixed experiment $t$ and transforms it to an 8 dimensional representation. The sum of this representation across all experiments completed so far is then fed into another neural network called `emitter` which takes this 8 dimensional representation, feeds it into a hidden layer of 2 nodes and outputs a new location to test $\xi_t$ with a single dimension, summarised notationally as $$\pi(h_{t-1})$$. 
+
+```python 
+class emitter(nn.Module):
+    def __init__(self, num_inputs=8, num_hidden=2, num_outputs=1):
+        super().__init__()
+        self.linear1=nn.Linear(num_inputs, num_hidden)
+        self.linear2=nn.Linear(num_hidden, num_outputs)
+
+    def forward(self, x):
+        x=self.linear1(x)
+        x=self.linear2(x)
+        return x
+
+```
+
+The 'encoder' and 'emitter' neural networks combine together to make the design policy neural network.
+
+```python 
+class Policy(nn.Module):
+    def __init__(self, encoder, emitter):
+        super().__init__()
+        self.encoder = encoder
+        self.emitter = emitter
+        self.norm = nn.LayerNorm(encoder.linear2.out_features)
+
+    def forward(self, history):
+        B, T, D = history.shape
+        
+        if T==0:
+            z = history.new_full((B, self.encoder.linear2.out_features), 0)
+        else:
+            encoded = self.encoder(history.reshape(B*T, D))
+            encoded = encoded.reshape(B, T, -1)
+            z=encoded.sum(dim=1)
+            z = self.norm(z)
+        xi_t = self.emitter(z)
+        return xi_t
+```
+Now we have defined our neural network we need to train it using synthetic data in order to recommend good experiments which are maximising our EIG. We create a set of training data ($L$ complete experiment *rollouts*) which we wish to use for one optimisation of the neural network as follows:
+
+For $$l = 1,...,L$$:\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample the location of a signal $$\theta_0 \sim N(0,1)$$\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For $$t = 1,...,T$$: \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute the next design $$\xi_t = \pi(h_{t-1})$$ \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample $$y_t \sim p(y \mid \theta_0, \xi_t)$$ \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set $$h_t = \{(\xi_1, y_1), (\xi_t, y_t)\}$$.
+
+Now we have completed $L$ full, synthetic experiments, we can estimate the average EIG for this policy $$\pi$$. Whilst neural networks usually wish to minimise some predictive loss, for this use case we wish to maximise the EIG of the policy $\pi$. As such, our loss in this case is the negative estimated EIG. To backpropogate using this loss, we need to ensure that the EIG is both computable and differentiable. As the EIG itself is doubly intractable, a constrastive bound as a lower bound of the EIG rather than the EIG itself for computational reasons. Thus, if we can maximise this lower bound of the EIG, we can tune our policies parameters toward a data acquisition policy which better maximises the EIG of the experiments we undertake. More details of the exact approximation can be found in the original paper, with code provided here just for completeness.
+
+```python 
+def log_likelihood(y_T, theta, xi_T):
+    y_T = y_T.unsqueeze(1)
+    xi_T = xi_T.unsqueeze(1)
+    scale = torch.tensor(0.5, device=theta.device, dtype=theta.dtype)
+    dist = torch.distributions.LogNormal(loc = torch.log(signal(theta, xi_T)), scale = scale)
+    return dist.log_prob(y_T).sum(dim=-1)
+```
+
+```python 
+def gL_batch(theta_0, history_B, L):
+    B = theta_0.shape[0]
+    log_y_T = history_B[:, :, 1]
+    y_T = log_y_T.exp()
+    xi_T = history_B[:,:,0]
+
+    theta_l = torch.distributions.Normal(loc = 0, scale = 1).rsample((B,L,1))
+    theta_0_L = torch.cat([theta_0.unsqueeze(1), theta_l], dim=1)
+    log_liks = log_likelihood(y_T, theta_0_L, xi_T)
+    true_log_lik = log_liks[:, 0]
+    gL = (true_log_lik- torch.logsumexp(log_liks, dim=1)+ torch.log(torch.tensor(L + 1)))
+    return gL.mean()
+```
+
+Accordingly, when $$L$$ full, synthetic experiments have been undertaken, we approximate the total EIG associated with policy $$\pi$$, backpropagate the neural network and subsequently tune our parameters with the aim of improving upon the average total EIG associated with our design policy. We then repeat this process, running another $L$ experiments, backpropagating and tuning parameters once more to improve the neural network. As a result, the design policy is continually updated and refined to select increasingly informative locations at which to detect the signal in an effort to identify its true source.
+
+The code to run DAD for this example is found below. 
+```python 
+B = 1000
+L = 1000
+T = 15
+
+gradient_steps = 4000
+annealing_frequency = 1000
+gamma = 0.95
+betas = (0.8, 0.998)
+
+policy = Policy(encoder(), emitter())
+optimiser=torch.optim.Adam(policy.parameters(), lr=0.0001, betas=betas)
+
+
+scheduler = torch.optim.lr_scheduler.StepLR(optimiser,step_size=annealing_frequency,gamma=gamma,)
+#save_dir = "/well/cebam/users/wuy614/practice_dad"
+save_dir = "results"
+loss_history = []
+
+for step in range(gradient_steps):
+    optimiser.zero_grad()
+    theta_0 = torch.distributions.Normal(loc = 0, scale = 1).rsample((B,1))
+    history = torch.empty(B, 0, 2)
+    for t in range(T):
+        xi_t = policy(history.float())
+        mean = torch.log(signal(theta_0, xi_t))
+        log_y_t = torch.distributions.Normal(loc = mean, scale = torch.tensor(0.5, dtype=torch.float32)).rsample()
+        new_pair = torch.stack([xi_t, log_y_t], dim=2)
+        history = torch.cat([history, new_pair], dim=1)
+    loss = -gL_batch(theta_0, history,L)
+    wandb.log({"loss": loss.item(), "step": step})
+    loss_history.append(loss.item())
+    print(loss)
+    torch.save({
+    "step": step,
+    "optimiser_state_dict": optimiser.state_dict(),
+    "policy_state_dict": policy.state_dict(),
+    "loss": loss.item(),
+    "loss_history": loss_history,
+    }, os.path.join(save_dir, f"checkpoint_step_{step}.pt"))
+    
+    
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(policy.parameters(), max_norm=1.0)
+    optimiser.step()
+    scheduler.step()
+```
+
+Below I share a photo documenting the loss (negative contrastive lower bound) of the EIG for 4,000 policy design updates for DAD. You can see how, in general, every time I backpropogate and tune the neural network (recorded on the x-axis) the total EIG associated with the design policy generally seems to improve (with the negative EIG becoming smaller). As such, each subsequent neural network generally recommends new experiments which are even better at maximising the overall EIG of the experiment. After training the model across 4,000 optimisations (or once training budget has been depleted) this design policy may now be ready for deployment and used in real time for data gathering. 
