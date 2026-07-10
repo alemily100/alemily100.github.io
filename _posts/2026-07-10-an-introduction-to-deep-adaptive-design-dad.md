@@ -8,7 +8,7 @@ tags:
 author_profile: false
 ---
 
-This is a sample blog post. Lorem ipsum I can't remember the rest of lorem ipsum and don't have an internet connection right now. Testing testing testing this blog post. Blog posts are cool.
+In the blog post I introduce [Deep Adaptive Desing (DAD)](https://arxiv.org/pdf/2103.02438), an increasingly common computational appraoch to implement Bayesian Experimental Design. The post includes a whistle stop tour of the core concepts of BED, Neural Networks and Embeddings, written with statisticians in mind who are new to the world of Machine Learning (like me)!
 
 Headings are cool
 ======
