@@ -28,7 +28,7 @@ To understand this formula, suppose we wish to quantitatively evaluate the benef
 **Inner integral**:
 Suppose we guessed 'ADIEU' and observed outcome ⬜⬜⬜🟨⬜. In this case, we know only the letter E from ADIEU is in the secret word, though it is not the fourth letter. To evaluate how good our guess of 'ADIEU' was having observed outcome ⬜⬜⬜🟨⬜, we need to evaluate how much we learnt across all potential secret words $$\theta \in \Theta$$ (around 2,300 options). Thus, we first propagate our uncertainty across all potential parameter options $\theta$ we may see. For example, this guess certainly means we no longer suspect 'BUZZY' of being the secret word, but it hasn't helped us learn whether the secret word is either 'WHOLE' or 'PROSE'. This inner integral helps us mathematically quantify this learning. 
 
-**Inner integral**:
+**Outer integral**:
 The outer integral recognises that we cannot observe outcome ⬜⬜⬜🟨⬜ without choosing ADIEU as a guess to start with. This goes against the whole point of the challenge, we want to know if 'ADIEU' is a good word to guess before wasting a Wordle turn on it. In this case we must also propagate our uncertainty once more over all the potential colour patterns we may see for the word 'ADIEU'. For example, as 'ADIEU' has lots of vowels, we expect the colour pattern to have more yellows and greens compared to a more unusual word like 'FLUFF' which, with its repeated F's, is less likely to share many letters with the secret word. 
 
 Accordingly, the best first guess for Wordle will be $$\xi^* = \arg \max_{\xi \in \Xi} EIG_\theta(\xi).$$
