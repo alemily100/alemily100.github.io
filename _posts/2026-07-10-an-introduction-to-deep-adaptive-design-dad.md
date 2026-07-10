@@ -67,18 +67,16 @@ This process of making a *forward pass* of the model (running the model for new 
 
 Whilst this section has introduced neural networks considering an example with a single node per layer, we can increase the *width* of the network by adding multiple nodes per layer. Intuitively, this does not add much additional complication, with the main change being that the activation for each node at a certain layer is now an aggregate of the weights and biases associated with the nodes in the previous layer. 
 
-```python 
-import torch 
-import torch.nn as nn
-import os
-```
-
 ## Embeddings
 In a neural network, you may not wish to input raw data in the input layer. Rather you may wish to use a *representation* of the data using an *embedding*. Embeddings can be used to transform complex data (such as audio or image data) into lower-dimensional objects for use in a machine learning models. In this way, embeddings can learn the important relationships of the higher dimensional space whilst its lower dimensional representation is easier to work with and more computationally efficient. Alternatively, as per the code below, embeddings can also be used to map lower-dimensional raw data into a higher-dimensional representation. This may help models recognise more granular nuances in the data. 
 
 These embeddings can be learnt using neural networks. For example, in the code below for a neural network called `encoder`,  we take some raw data of dimension 2, have a single hidden layer of 128 nodes and output a new representation of the raw data with dimension 8. This eight-dimensional representation is used as the input to some model with a specific prediction task encoded into its loss. As such, when the neural backpropagates using this loss, the weights and biases associated with this embedding are tuned to ensure a more effective embedding can be utilised.
 
-```python 
+```python
+import torch 
+import torch.nn as nn
+import os
+
 class encoder(nn.Module):
     def __init__(self, num_inputs = 2, num_hidden=128, num_outputs=8):
         super().__init__()
