@@ -10,7 +10,7 @@ redirect_from:
 
 My name is Emily, I am a Biostatistics Postdoctoral researcher at the University of Oxford within the Oxford-GSK Centre for Biostatistics and AI in Medicine, CeBAM working with Professor Tom Rainforth. I work on small data at the Big Data Institute. 
 
-My research interests lie in adaptive early phase trials and optimal experimental design. My aim is to continue introducing novel statitsical methodology within the realm of adaptive trials.   
+My research interests lie in adaptive early phase trials and optimal experimental design. My aim is to introduce novel statistical methodology to adaptive trials.   
 
 I previously completed a PhD at the Institute of Cancer Research integrating Patient-reported Outcomes within dose-finding trials and bayesian adaptive trial methodology supervised by Professor Christina Yap. 
 
