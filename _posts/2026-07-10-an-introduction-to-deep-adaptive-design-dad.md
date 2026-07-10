@@ -241,3 +241,5 @@ for step in range(gradient_steps):
 ```
 
 Below I share a photo documenting the loss (negative contrastive lower bound) of the EIG for 4,000 policy design updates for DAD. You can see how, in general, every time I backpropogate and tune the neural network (recorded on the x-axis) the total EIG associated with the design policy generally seems to improve (with the negative EIG becoming smaller). As such, each subsequent neural network generally recommends new experiments which are even better at maximising the overall EIG of the experiment. After training the model across 4,000 optimisations (or once training budget has been depleted) this design policy may now be ready for deployment and used in real time for data gathering. 
+
+![Loss per training for the tuning of a neural network as a deisng policy for DAD](/images/DAD-blog-training.png)
