@@ -55,8 +55,9 @@ Consider a simple neural network with $$L$$ layers which looks something like,
 
 We start with our raw inputs $$x$$. These raw inputs are linearly transformed given a weight $$w^{(1)}$$ and bias $$b^{(1)}$$ such that $$z^{(1)} = w^{(1)}x + b^{(1)}$$. $$z^{(1)}$$ is then transformed using a non-linear transformation $$\sigma^{(1)}$$ such that $$a^{(1)} = \sigma^{(1)}(z^{(1)})$$. Exemplar functions $$\sigma^{(1)}$$ can include sigmoid() or tanh() functions. 
 
-Now at the second layer, the activation function consists of a non-linear transformation of a linear transformation of the proceeding activation function. For example, $$a^{(2)} = \sigma^{(2)}(w^{(2)}a^{(1)} + b^{(2)}) = \sigma^{(2)}(w^{(2)}\sigma^{(1)}(w^{(1)}x + b^{(1)}) + b^{(2)})$$. 
-A third layer has an activation function which is a function of the proceeding activation function from the second layer and so on. By adding more layers to the neural network, we increase its *depth*. All these nodes between the inputs and final predicted layers are called *hidden layers*. Once we have computed the activation function for the final layer $L$, there are by now many parameters (weights and biases) associated with the predictive task. 
+Now at the second layer, the first layer's output $$a^{(1)}$$ is treated as a new input. This input is linearly transformed with a new weight and bias, before it is non-linearly transformed through a second activation function $$\sigma^{(2)}$$. For example, $$a^{(2)} = \sigma^{(2)}(w^{(2)}a^{(1)} + b^{(2)}) = \sigma^{(2)}(w^{(2)}\sigma^{(1)}(w^{(1)}x + b^{(1)}) + b^{(2)})$$. 
+
+This continues, the outputs of the preceeding layer are used as inputs for the next with its own weights, bias and activation function. By adding more layers to the neural network, we increase its *depth* (meaning the total number of layers). All these nodes between the inputs and final predicted layers are called *hidden layers*. Once we have computed $$a^{(L)}$$ for the final layer $L$, there are by now many parameters (weights and biases) associated with the predictive task. 
 
 Now we have to evaluate the predictive performance of the neural network. To do so, when we train the neural network, we compare our network's prediction to the true outcome using a *loss*, such as the sum of squared residuals used in linear regression. 
 
