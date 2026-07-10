@@ -92,7 +92,7 @@ class encoder(nn.Module):
 ```
 
 ## Exemplar problem 
-Consider a scenario where we wish to identify the location of a signal source somewhere in one-dimensional space. In this example, we can choose points in space and estimate the signal intensity at each one. Suppose we can complete $T$ experiments and by the end of the 15th experiment, we want to have identified the location of the source $$\theta$$ as precisely as possible. 
+Consider a scenario where we wish to identify the location of a signal source somewhere in one-dimensional space. In this example, we can choose points in space and estimate the signal intensity at each one. Suppose we can complete $$T$$ experiments and by the end of the 15th experiment, we want to have identified the location of the source $$\theta$$ as precisely as possible. 
 
 To use DAD in this scenario we need a model for the signal strength. At location $$\xi$$, if the source of the signal is $$\theta$$ the signal strength is known to be, 
 $$
