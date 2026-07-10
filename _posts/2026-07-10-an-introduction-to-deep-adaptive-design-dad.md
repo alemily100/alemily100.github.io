@@ -1,5 +1,5 @@
 ---
-title: 'An introduction to Deep Daptive Desing (DAD)'
+title: 'An introduction to Deep Adaptive Design (DAD)'
 date: 2026-07-10
 permalink: /posts/2026/07/DAD/
 tags:
