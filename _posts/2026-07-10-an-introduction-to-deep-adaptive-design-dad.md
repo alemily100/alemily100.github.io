@@ -45,7 +45,7 @@ As the neural network is trained before the experiment has even been run, the de
 
 ## Neural Networks 
 
-Whilst neural Networks have always struck me as mystical black box, broadly speaking their specific approach to model fitting is somewhat similar to more statistically-minded approaches such as ordinary least squares estimator for linear regression. It is more so their intricate architecture, rather than their broader methodology, which differs.
+Whilst neural Networks have always struck me as mystical black boxes, broadly speaking their specific approach to model fitting is somewhat similar to more statistically-minded approaches such as ordinary least squares estimator for linear regression. It is more so their intricate architecture, rather than their broader methodology, which differs.
 
 Like any statsitical model, with a neural network you have a number of inputs which you wish to use to predict some output. Similarly to a linear regression, a neural network takes these inputs and finds a relationship to map the inputs to an output. The exact relationship between inputs and outputs is formed in hidden layers of the neural network. 
 
